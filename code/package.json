@@ -1,0 +1,16 @@
+{
+  "name": "u-track",
+  "productName": "u-track",
+  "version": "1.0.0",
+  "description": "Lokale onderwerpen, categorieën en Markdown-notities",
+  "main": "src/main.js",
+  "author": "Pascal Thong",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.js",
+    "pack": "node scripts/build-linux.js"
+  },
+  "devDependencies": {
+    "electron": "45.0.0"
+  }
+}

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>u-track</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 128 128" width="36" height="36"><rect width="128" height="128" rx="28" fill="currentColor"/><path d="M38 33v42c0 28 52 28 52 0V33" fill="none" stroke="var(--paper)" stroke-width="12" stroke-linecap="round"/></svg></span><div>u-track<small>Alles op zijn plek.</small></div></div>
+    <button id="command-button" class="command-button"><span>⌕ &nbsp; Opdracht zoeken</span><kbd>Ctrl K</kbd></button>
+    <div class="nav-label">BIBLIOTHEEK</div>
+    <nav aria-label="Bibliotheek">
+      <button id="all-objects" class="nav-item"><span>▦ &nbsp; Onderwerpen <kbd>Alt 1</kbd></span><span id="object-count" class="count">0</span></button>
+      <button id="all-notes" class="nav-item"><span>▤ &nbsp; Notities <kbd>Alt 2</kbd></span><span id="note-count" class="count">0</span></button>
+      <button id="all-groups" class="nav-item"><span>○ &nbsp; Categorieën <kbd>Alt 3</kbd></span><span id="group-count" class="count">0</span></button>
+    </nav>
+    <div class="nav-label groups-heading"><span>CATEGORIEËN</span><button id="add-group-small" class="icon-button" aria-label="Categorie toevoegen (Ctrl Shift G)" title="Categorie toevoegen · Ctrl Shift G">+</button></div>
+    <nav id="group-list" aria-label="Categorieën"></nav><div class="group-order-hint">Sleep om te ordenen <kbd>Alt ↑/↓</kbd></div>
+    <button id="add-group" class="subtle-button"><span>+ Categorie toevoegen</span><kbd>Ctrl ⇧ G</kbd></button>
+    <div class="sidebar-bottom">
+      <button id="open-folder" class="footer-button"><span>▱ &nbsp; Gegevensmap</span><kbd>Ctrl ⇧ O</kbd></button>
+      <button id="help-button" class="footer-button"><span>⌨ &nbsp; Sneltoetsen</span><kbd>F1</kbd></button>
+      <button id="settings-button" class="footer-button"><span>⚙ &nbsp; Instellingen</span><kbd>Ctrl ,</kbd></button>
+    </div>
+  </aside>
+  <main>
+    <header class="topbar"><span id="breadcrumb">Bibliotheek <span>/</span> Onderwerpen</span><span class="topbar-right">Een rustige plek voor overzicht.</span></header>
+    <section class="page-header">
+      <div><div class="eyebrow" id="eyebrow">JOUW BIBLIOTHEEK</div><h1 id="page-title">Onderwerpen</h1><p id="page-description">Onderwerpen, personen en hun verhalen. Bij elkaar.</p></div>
+      <div class="page-actions"><button id="edit-group" class="button hidden">Categorie bewerken <kbd>Ctrl E</kbd></button><button id="new-group" class="button primary hidden">+ Categorie toevoegen <kbd>Ctrl ⇧ G</kbd></button><button id="new-object" class="button primary">+ Onderwerp toevoegen <kbd>Ctrl N</kbd></button></div>
+    </section>
+    <section class="workspace">
+      <div class="collection">
+        <div class="collection-toolbar"><div class="tabs" aria-label="Weergave"><button id="objects-tab">Onderwerpen</button><button id="notes-tab">Notities</button><button id="groups-tab">Categorieën</button></div><button id="refresh" class="icon-button" title="Vernieuwen · Ctrl R" aria-label="Vernieuwen (Ctrl R)">↻</button></div>
+        <div class="search-row"><span>⌕</span><input id="search" type="search" placeholder="Zoek in onderwerpen, categorieën en alle notities…" aria-label="Alles doorzoeken"><kbd>Ctrl F</kbd></div>
+        <div id="list-caption" class="list-caption"></div>
+        <div id="collection-content" class="collection-content" aria-live="polite"></div>
+        <div class="collection-bottom"><span id="result-count"></span><span><kbd>↑</kbd> <kbd>↓</kbd> selecteren &nbsp; <kbd>Enter</kbd> openen</span></div>
+      </div>
+      <aside id="detail" class="detail-panel" aria-label="Details"></aside>
+    </section>
+    <footer class="page-footer"><span id="save-status" role="status">CSV & Markdown · Geen account nodig</span><span><kbd>Ctrl K</kbd> alle opdrachten</span></footer>
+  </main>
+  <dialog id="editor-dialog"><form id="editor-form"><div id="editor-content"></div><div class="dialog-footer"><span id="dialog-hint"><kbd>Esc</kbd> annuleren</span><div><button type="button" id="cancel-editor" class="button">Annuleren</button><button type="submit" id="save-editor" class="button primary">Opslaan <kbd>Ctrl ↵</kbd></button></div></div></form></dialog>
+  <dialog id="command-dialog"><div class="palette-heading"><span>Opdrachten</span><kbd>Esc</kbd></div><input id="command-search" type="search" placeholder="Wat wil je doen?" aria-label="Opdracht zoeken"><div id="command-results"></div></dialog>
+  <dialog id="help-dialog"><div class="dialog-heading"><div class="eyebrow">WERKEN ZONDER MUIS</div><h2>Sneltoetsen</h2><p>Alle knoppen en velden zijn ook bereikbaar met Tab.</p></div><div id="shortcut-list"></div><div class="dialog-footer"><span><kbd>Esc</kbd> sluiten</span><button id="close-help" class="button primary">Sluiten</button></div></dialog>
+  <div id="toast" role="status" class="toast hidden"></div>
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <form id="settings-form">
+      <div class="dialog-heading"><div class="eyebrow">VOORKEUREN</div><h2 id="settings-title">Instellingen</h2></div>
+      <div class="settings-body">
+        <section><h3>Opslagmap</h3><label class="field">Huidige map<input id="settings-path" readonly></label><button type="button" id="settings-choose-folder" class="button">Andere map kiezen <kbd>Ctrl ⇧ D</kbd></button><p class="field-hint">Opent de gegevens in de gekozen map. Bestaande gegevens blijven in hun huidige map.</p></section>
+        <section><h3>Weergave</h3><label class="field">Thema<select id="settings-theme"><option value="light">Licht</option><option value="dark">Donker</option><option value="custom">Eigen thema</option></select></label><div id="settings-colors" class="settings-colors"></div></section>
+        <section><div class="settings-section-heading"><h3>Standaardteksten</h3><button type="button" id="settings-reset-texts" class="button">Teksten herstellen</button></div><p class="field-hint">Pas knoppen, labels, meldingen en hulpteksten aan. Je eigen onderwerpen, categorieën en notities veranderen niet. Een leeg veld verbergt de tekst.</p><label class="field">Tekst zoeken<input id="settings-text-search" type="search" placeholder="Zoek een standaardtekst…"></label><div id="settings-texts" class="settings-texts"></div></section>
+        <p id="settings-error" class="error-inline" role="alert"></p>
+      </div>
+      <div class="dialog-footer"><button type="button" id="settings-reset-theme" class="button">Thema herstellen</button><div><button type="button" id="settings-cancel" class="button">Annuleren <kbd>Esc</kbd></button><button class="button primary" type="submit">Opslaan <kbd>Ctrl ↵</kbd></button></div></div>
+    </form>
+  </dialog>
+  <script src="text-defaults.js"></script>
+  <script src="app.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>
